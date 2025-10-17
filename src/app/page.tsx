@@ -24,7 +24,7 @@ export default function Home() {
   const netProfit = totalRevenue - monthlyRetainer;
 
   // Calculate growth-adjusted metrics based on growth type
-  const getGrowthAdjustedMetrics = (month) => {
+  const getGrowthAdjustedMetrics = (month: number) => {
     let adjustedEmails = emailsPerMonth;
     let adjustedCloseRate = closeRate / 100;
     let adjustedNewClients = newClients;
