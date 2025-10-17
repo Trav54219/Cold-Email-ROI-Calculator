@@ -126,7 +126,7 @@ describe('Growth Scenarios Math', () => {
   };
 
   const getGrowthAdjustedMetrics = (month: number, growthType: string) => {
-    let adjustedEmails = baseMetrics.emailsPerMonth;
+    const adjustedEmails = baseMetrics.emailsPerMonth;
     let adjustedCloseRate = baseMetrics.closeRate / 100;
     let adjustedNewClients = 0;
 

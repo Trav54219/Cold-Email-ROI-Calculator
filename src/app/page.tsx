@@ -25,7 +25,7 @@ export default function Home() {
 
   // Calculate growth-adjusted metrics based on growth type
   const getGrowthAdjustedMetrics = (month: number) => {
-    let adjustedEmails = emailsPerMonth;
+    const adjustedEmails = emailsPerMonth;
     let adjustedCloseRate = closeRate / 100;
     let adjustedNewClients = newClients;
 

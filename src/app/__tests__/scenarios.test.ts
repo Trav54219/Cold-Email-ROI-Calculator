@@ -11,7 +11,7 @@ describe('Real-World Scenario Tests', () => {
 
   const calculateScenario = (monthlyRetainer: number, closeRate: number, ltv: number, growthType: string = 'linear') => {
     const getGrowthAdjustedMetrics = (month: number) => {
-      let adjustedEmails = baseMetrics.emailsPerMonth;
+      const adjustedEmails = baseMetrics.emailsPerMonth;
       let adjustedCloseRate = closeRate / 100;
       let adjustedNewClients = 0;
 
