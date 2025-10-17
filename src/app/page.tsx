@@ -6,10 +6,10 @@ export default function Home() {
   const [monthlyRetainer, setMonthlyRetainer] = useState(2500);
   const [closeRate, setCloseRate] = useState(25);
   const [ltv, setLtv] = useState(15000);
-  const [growthType, setGrowthType] = useState('linear'); // 'linear', 'scaling', 'improving'
+  const [emailsPerMonth, setEmailsPerMonth] = useState(15000);
+  const [growthType, setGrowthType] = useState('linear'); // 'linear', 'improving'
 
   // Fixed metrics based on your service
-  const emailsPerMonth = 15000;
   const responseRate = 0.02; // 2%
   const positiveReplyRate = 0.05; // 5%
   const callBookingRate = 0.40; // 40%
@@ -30,11 +30,6 @@ export default function Home() {
     let adjustedNewClients = newClients;
 
     switch (growthType) {
-      case 'scaling':
-        // Scale email volume by 20% each month
-        adjustedEmails = emailsPerMonth * Math.pow(1.2, month - 1);
-        adjustedNewClients = (adjustedEmails * responseRate * positiveReplyRate * callBookingRate) * adjustedCloseRate;
-        break;
       case 'improving':
         // Improve close rate by 2% each month
         adjustedCloseRate = Math.min((closeRate + (month - 1) * 2) / 100, 0.5); // Cap at 50%
@@ -111,7 +106,7 @@ export default function Home() {
             <div className="mb-8">
               <h2 className="text-xl font-semibold text-card-foreground mb-4">Growth Scenario</h2>
               <div className="bg-muted rounded-xl p-4">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <button
                     onClick={() => setGrowthType('linear')}
                     className={`p-3 rounded-lg text-center transition-colors ${
@@ -121,19 +116,7 @@ export default function Home() {
                     }`}
                   >
                     <div className="font-semibold">Linear Growth</div>
-                    <div className="text-sm opacity-80">Constant 1.5 clients/month</div>
-                  </button>
-                  
-                  <button
-                    onClick={() => setGrowthType('scaling')}
-                    className={`p-3 rounded-lg text-center transition-colors ${
-                      growthType === 'scaling'
-                        ? 'bg-primary text-primary-foreground'
-                        : 'bg-accent text-card-foreground hover:bg-accent/80'
-                    }`}
-                  >
-                    <div className="font-semibold">Scaling Volume</div>
-                    <div className="text-sm opacity-80">+20% emails each month</div>
+                    <div className="text-sm opacity-80">Constant performance each month</div>
                   </button>
                   
                   <button
@@ -155,7 +138,7 @@ export default function Home() {
             <div className="mb-8">
               <h2 className="text-xl font-semibold text-card-foreground mb-6">Your Details</h2>
               
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <div>
                   <label className="block text-sm font-medium text-card-foreground mb-2">
                     Monthly Retainer ($)
@@ -167,6 +150,20 @@ export default function Home() {
                     className="w-full px-4 py-3 bg-input border border-border rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent text-card-foreground"
                     placeholder="2500"
                   />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-card-foreground mb-2">
+                    Emails Per Month
+                  </label>
+                  <input
+                    type="number"
+                    value={emailsPerMonth || ''}
+                    onChange={(e) => setEmailsPerMonth(Number(e.target.value) || 0)}
+                    className="w-full px-4 py-3 bg-input border border-border rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent text-card-foreground"
+                    placeholder="15000"
+                  />
+                  <p className="text-xs text-muted-foreground mt-1">Number of cold emails sent per month</p>
                 </div>
 
                 <div>
@@ -265,7 +262,6 @@ export default function Home() {
             <h2 className="text-2xl font-bold text-primary-foreground">6-Month Cash Flow Projection</h2>
             <p className="text-primary-foreground/80 mt-1">
               {growthType === 'linear' && 'Linear Growth - Constant performance each month'}
-              {growthType === 'scaling' && 'Scaling Volume - Increasing email volume by 20% monthly'}
               {growthType === 'improving' && 'Improving Conversions - Close rate improves by 2% monthly'}
             </p>
           </div>

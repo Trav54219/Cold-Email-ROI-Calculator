@@ -131,10 +131,6 @@ describe('Growth Scenarios Math', () => {
     let adjustedNewClients = 0;
 
     switch (growthType) {
-      case 'scaling':
-        adjustedEmails = baseMetrics.emailsPerMonth * Math.pow(1.2, month - 1);
-        adjustedNewClients = (adjustedEmails * baseMetrics.responseRate * baseMetrics.positiveReplyRate * baseMetrics.callBookingRate) * adjustedCloseRate;
-        break;
       case 'improving':
         adjustedCloseRate = Math.min((baseMetrics.closeRate + (month - 1) * 2) / 100, 0.5);
         adjustedNewClients = (baseMetrics.emailsPerMonth * baseMetrics.responseRate * baseMetrics.positiveReplyRate * baseMetrics.callBookingRate) * adjustedCloseRate;
@@ -162,18 +158,14 @@ describe('Growth Scenarios Math', () => {
     expect(month6.adjustedEmails).toBe(15000);
   });
 
-  it('should calculate scaling growth correctly', () => {
-    const month1 = getGrowthAdjustedMetrics(1, 'scaling');
-    const month2 = getGrowthAdjustedMetrics(2, 'scaling');
-    const month3 = getGrowthAdjustedMetrics(3, 'scaling');
+  it('should maintain constant email volume in linear growth', () => {
+    const month1 = getGrowthAdjustedMetrics(1, 'linear');
+    const month6 = getGrowthAdjustedMetrics(6, 'linear');
     
     expect(month1.adjustedEmails).toBe(15000);
-    expect(month2.adjustedEmails).toBe(18000);
-    expect(month3.adjustedEmails).toBe(21600);
-    
+    expect(month6.adjustedEmails).toBe(15000);
     expect(month1.adjustedNewClients).toBe(1.5);
-    expect(month2.adjustedNewClients).toBe(1.8);
-    expect(month3.adjustedNewClients).toBe(2.16);
+    expect(month6.adjustedNewClients).toBe(1.5);
   });
 
   it('should calculate improving conversions correctly', () => {
@@ -274,15 +266,12 @@ describe('6-Month Projection Calculations', () => {
     expect(projections[5].cumulativeProfit).toBe(120000);
   });
 
-  it('should calculate scaling projections correctly', () => {
-    const projections = calculateProjections('scaling');
+  it('should maintain constant projections in linear growth', () => {
+    const projections = calculateProjections('linear');
     
-    expect(projections[0].newClientsThisMonth).toBe(1.5);
-    expect(projections[1].newClientsThisMonth).toBe(1.8);
-    expect(projections[2].newClientsThisMonth).toBe(2.16);
-    
-    // Month 6 should have significantly more clients
-    expect(projections[5].newClientsThisMonth).toBeGreaterThan(3);
+    projections.forEach(projection => {
+      expect(projection.newClientsThisMonth).toBe(1.5);
+    });
   });
 
   it('should calculate improving projections correctly', () => {

@@ -16,10 +16,6 @@ describe('Real-World Scenario Tests', () => {
       let adjustedNewClients = 0;
 
       switch (growthType) {
-        case 'scaling':
-          adjustedEmails = baseMetrics.emailsPerMonth * Math.pow(1.2, month - 1);
-          adjustedNewClients = (adjustedEmails * baseMetrics.responseRate * baseMetrics.positiveReplyRate * baseMetrics.callBookingRate) * adjustedCloseRate;
-          break;
         case 'improving':
           adjustedCloseRate = Math.min((closeRate + (month - 1) * 2) / 100, 0.5);
           adjustedNewClients = (baseMetrics.emailsPerMonth * baseMetrics.responseRate * baseMetrics.positiveReplyRate * baseMetrics.callBookingRate) * adjustedCloseRate;
@@ -104,20 +100,20 @@ describe('Real-World Scenario Tests', () => {
     });
   });
 
-  describe('Scaling Volume Scenario', () => {
-    const scenario = calculateScenario(2500, 25, 15000, 'scaling');
+  describe('Email Volume Impact Scenario', () => {
+    const scenario = calculateScenario(2500, 25, 15000, 'linear');
     
-    it('should show increasing clients with scaling volume', () => {
+    it('should show constant performance with linear growth', () => {
       expect(scenario.projections[0].newClientsThisMonth).toBe(1.5); // Month 1
-      expect(scenario.projections[1].newClientsThisMonth).toBe(1.8); // Month 2: 1.5 * 1.2
-      expect(scenario.projections[2].newClientsThisMonth).toBe(2.16); // Month 3: 1.8 * 1.2
-      expect(scenario.projections[5].newClientsThisMonth).toBeCloseTo(3.73, 1); // Month 6: 1.5 * 1.2^5
+      expect(scenario.projections[1].newClientsThisMonth).toBe(1.5); // Month 2
+      expect(scenario.projections[2].newClientsThisMonth).toBe(1.5); // Month 3
+      expect(scenario.projections[5].newClientsThisMonth).toBe(1.5); // Month 6
     });
 
-    it('should show exponential revenue growth', () => {
-      expect(scenario.sixMonth.cumulativeClients).toBeCloseTo(14.9, 1); // Sum of all months
-      expect(scenario.sixMonth.cumulativeRevenue).toBeCloseTo(223423, 0); // Actual calculated value
-      expect(scenario.sixMonth.cumulativeProfit).toBeCloseTo(208423, 0); // 223423 - 15000
+    it('should show linear revenue growth', () => {
+      expect(scenario.sixMonth.cumulativeClients).toBe(9.0); // 1.5 * 6 months
+      expect(scenario.sixMonth.cumulativeRevenue).toBe(135000); // 9.0 * 15000
+      expect(scenario.sixMonth.cumulativeProfit).toBe(120000); // 135000 - 15000
     });
   });
 
@@ -171,13 +167,14 @@ describe('Real-World Scenario Tests', () => {
       });
     });
 
-    it('should show increasing ROI for scaling growth', () => {
-      const scenario = calculateScenario(2500, 25, 15000, 'scaling');
+    it('should maintain consistent ROI for linear growth', () => {
+      const scenario = calculateScenario(2500, 25, 15000, 'linear');
       
-      // ROI should increase each month
-      for (let i = 1; i < scenario.projections.length; i++) {
-        expect(scenario.projections[i].roi).toBeGreaterThan(scenario.projections[i-1].roi);
-      }
+      // ROI should be the same for each month in linear growth
+      scenario.projections.forEach(projection => {
+        const expectedROI = ((projection.newClientsThisMonth * 15000 - 2500) / 2500) * 100;
+        expect(projection.roi).toBeCloseTo(expectedROI, 0);
+      });
     });
 
     it('should show increasing ROI for improving conversions', () => {
